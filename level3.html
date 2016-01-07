@@ -1,0 +1,1044 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Hot Lava Game</title>
+<script src="jquery-2.1.4.min/jquery-2.1.4.min.js"></script>
+<script src="jquery-ui-1.11.4/jquery-ui.min.js"></script>
+<style>
+body {
+	background-color: #6E0001;
+	font-size: 200%;
+	font-weight: bold;
+	color: white;
+	-webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+	-webkit-transition: all 1s ease-in-out;
+-moz-transition: all 2s ease-in-out;
+-o-transition: all 2s ease-in-out;
+-ms-transition: all 2s ease-in-out;
+transition: all 2s ease-in-out;
+}
+.btn:hover {
+  background: #fc3c3c;
+  background-image: -webkit-linear-gradient(top, #fc3c3c, #eb0000);
+  background-image: -moz-linear-gradient(top, #fc3c3c, #eb0000);
+  background-image: -ms-linear-gradient(top, #fc3c3c, #eb0000);
+  background-image: -o-linear-gradient(top, #fc3c3c, #eb0000);
+  background-image: linear-gradient(to bottom, #fc3c3c, #eb0000);
+  text-decoration: none;
+}
+#main {
+	margin: 0 auto;
+	width: 980px;
+}
+p {
+	margin: 100px auto;
+}
+* {
+	padding: 0;
+	margin: 0;
+}
+canvas {
+	background: #565656;
+	display: block;
+	margin: 0 auto;
+	background-image: url("lavaBack.gif");
+}
+#jump {
+	width: 100px;
+	height: 100px;
+	background: red;
+	border: 5px solid #940002;
+}
+#right {
+	width: 100px;
+	height: 100px;
+	background: red;
+	border: 5px solid #940002;
+}
+#left {
+	width: 100px;
+	height: 100px;
+	background: red;
+	border: 5px solid #940002;
+}
+#draggableHelper {
+	width: 100px;
+	height: 100px;
+	background: red;
+}
+#makeMeDroppable {
+	float: left;
+	width: 100px;
+	height: 100px;
+	border: 2px solid #999;
+	background: #E45454;
+}
+#droppableStep2 {
+	float: left;
+	width: 100px;
+	height: 100px;
+	border: 2px solid #999;
+	background: #E45454;
+}
+#droppableStep3 {
+	float: left;
+	width: 100px;
+	height: 100px;
+	border: 2px solid #999;
+	background: #E45454;
+}
+#droppableStep4 {
+	float: left;
+	width: 100px;
+	height: 100px;
+	border: 2px solid #999;
+	background: #E45454;
+}
+#droppableStep5 {
+	float: left;
+	width: 100px;
+	height: 100px;
+	border: 2px solid #999;
+	background: #E45454;
+}
+</style>
+</head>
+
+<body>
+<div id="main">
+  <canvas id="myCanvas" width="800" height="600"></canvas>
+  <div id="content" style="height: 400px;">
+    <div id="jump">Jump! </div>
+    <div id="right">Right</div>
+    <div id="left">Left</div>
+    <div id="makeMeDroppable" class=""> </div>
+    <div id="droppableStep2"> </div>
+    <div id="droppableStep3"> </div>
+    <div id="droppableStep4"> </div>
+    <div id="droppableStep5"> </div>
+  </div>
+  <button class="btn" onclick="this.disabled=true; run();">Run!</button>
+  <button class="btn" onclick="this.disabled=true; run();">Run!</button>
+  <button class="btn" onclick="this.disabled=true; run();">Run!</button>
+  <button class="btn" onclick="this.disabled=true; run();">Run!</button>
+</div>
+<script type="text/javascript">
+//PLAN: 
+
+//storing a reference to the <canvas> element to the canvas variable for future reference and creating the ctx variable to store the 2D rendering (the  thing we can use to paint on the canvas)
+
+
+
+	var canvas = document.getElementById("myCanvas");
+	var ctx = canvas.getContext("2d");
+	
+	var ballRadius = 10;	
+	
+	
+	// dx & dy change the position of the baw by the defined amount
+	// Minus = left
+	var dx = 0;
+	//minus = up
+	var dy = 0;
+var Step1var;
+var Balls = [];
+var canvasYmax = Math.floor((Math.random() * 500) + 1);
+var canvasXmax = Math.floor((Math.random() * 500) + 1);
+var b1 = new Ball();
+            b1.Xmin = 370;
+            b1.Ymin = 465;
+            b1.Xdir = 0;
+            b1.Ydir = 0;
+            UpdateBallMax(b1);
+            Balls.push(b1);
+
+            var b2 = new Ball();
+            b2.Xmin = 370;
+            b2.Ymin = 430;
+            b2.Red = 255;
+            b2.Green = 0;
+            b2.Blue = 0;
+            b2.Xdir = 0;
+            b2.Ydir = 0;
+            UpdateBallMax(b2);
+            Balls.push(b2);
+
+            var b3 = new Ball();
+            b3.Xmin = 370;
+            b3.Ymin = 395;
+            b3.Red = 255;
+            b3.Green = 255;
+            b3.Blue = 0;
+            b3.Xdir = 0;
+            b3.Ydir = 0;
+            UpdateBallMax(b3);
+            Balls.push(b3);
+
+            var b4 = new Ball();
+            b4.Xmin = 370;
+            b4.Ymin = 395;
+            b4.Red = 0;
+            b4.Green = 0;
+            b4.Blue = 0;
+            b4.Xdir = 0;
+            b4.Ydir = 0;
+            UpdateBallMax(b4);
+            Balls.push(b4);
+            
+            var b5 = new Ball();
+            b5.Xmin = 370;
+            b5.Ymin = 360
+            b5.Red = 200;
+            b5.Green = 200;
+            b5.Blue = 200;
+            b5.Xdir = 0;
+            b5.Ydir = 0;
+            UpdateBallMax(b5);
+            Balls.push(b5);
+
+            var b6 = new Ball();
+            b6.Xmin = 370;
+            b6.Ymin = 325;
+            b6.Red = 75;
+            b6.Green = 75;
+            b6.Blue = 75;
+            b6.Xdir = 0;
+            b6.Ydir = 0;
+            UpdateBallMax(b6);
+            Balls.push(b6);
+			
+			var b7 = new Ball();
+            b7.Xmin = 370;
+            b7.Ymin = 290;
+            b7.Red = 75;
+            b7.Green = 75;
+            b7.Blue = 75;
+            b7.Xdir = 0;
+            b7.Ydir = 0;
+            UpdateBallMax(b7);
+            Balls.push(b7);
+			
+			var b8 = new Ball();
+            b8.Xmin = 370;
+            b8.Ymin = 255;
+            b8.Red = 75;
+            b8.Green = 75;
+            b8.Blue = 75;
+            b8.Xdir = 0;
+            b8.Ydir = 0;
+            UpdateBallMax(b8);
+            Balls.push(b8);
+			
+			var b9 = new Ball();
+            b9.Xmin = 370;
+            b9.Ymin = 220;
+            b9.Red = 75;
+            b9.Green = 75;
+            b9.Blue = 75;
+            b9.Xdir = 0;
+            b9.Ydir = 0;
+            UpdateBallMax(b9);
+            Balls.push(b9);
+			
+			var b10 = new Ball();
+            b10.Xmin = 370;
+            b10.Ymin = 185;
+            b10.Red = 75;
+            b10.Green = 75;
+            b10.Blue = 75;
+            b10.Xdir = 0;
+            b10.Ydir = 0;
+            UpdateBallMax(b10);
+            Balls.push(b10);
+			
+			var b11 = new Ball();
+            b11.Xmin = 370;
+            b11.Ymin = 150;
+            b11.Red = 75;
+            b11.Green = 75;
+            b11.Blue = 75;
+            b11.Xdir = 0;
+            b11.Ydir = 0;
+            UpdateBallMax(b11);
+            Balls.push(b11);
+			
+			var b12 = new Ball();
+            b12.Xmin = 370;
+            b12.Ymin = 115;
+            b12.Red = 75;
+            b12.Green = 75;
+            b12.Blue = 75;
+            b12.Xdir = 0;
+            b12.Ydir = 0;
+            UpdateBallMax(b12);
+            Balls.push(b12);
+			
+			var b13 = new Ball();
+            b13.Xmin = 370;
+            b13.Ymin = 80;
+            b13.Red = 75;
+            b13.Green = 75;
+            b13.Blue = 75;
+            b13.Xdir = 0;
+            b13.Ydir = 0;
+            UpdateBallMax(b13);
+            Balls.push(b13);
+			
+			var b14 = new Ball();
+            b14.Xmin = 370;
+            b14.Ymin = 45;
+            b14.Red = 75;
+            b14.Green = 75;
+            b14.Blue = 75;
+            b14.Xdir = 0;
+            b14.Ydir = 0;
+            UpdateBallMax(b14);
+            Balls.push(b14);
+			
+			var b15 = new Ball();
+            b15.Xmin = 370;
+            b15.Ymin = 10;
+            b15.Red = 75;
+            b15.Green = 75;
+            b15.Blue = 75;
+            b15.Xdir = 0;
+            b15.Ydir = 0;
+            UpdateBallMax(b15);
+            Balls.push(b15);
+			
+			var b16 = new Ball();
+            b16.Xmin = 370;
+            b16.Ymin = -25;
+            b16.Red = 75;
+            b16.Green = 75;
+            b16.Blue = 75;
+            b16.Xdir = 0;
+            b16.Ydir = 0;
+            UpdateBallMax(b16);
+            Balls.push(b16);
+			
+			var b17 = new Ball();
+            b17.Xmin = 370;
+            b17.Ymin = 500;
+            b17.Red = 255;
+            b17.Green = 0;
+            b17.Blue = 0;
+            b17.Xdir = 0;
+            b17.Ydir = 0;
+            UpdateBallMax(b17);
+            Balls.push(b17);
+			
+			var b18 = new Ball();
+            b18.Xmin = 370;
+            b18.Ymin = 535;
+            b18.Red = 255;
+            b18.Green = 0;
+            b18.Blue = 0;
+            b18.Xdir = 0;
+            b18.Ydir = 0;
+            UpdateBallMax(b18);
+            Balls.push(b18);
+			
+			var b19 = new Ball();
+            b19.Xmin = 370;
+            b19.Ymin = 570;
+            b19.Red = 255;
+            b19.Green = 0;
+            b19.Blue = 0;
+            b19.Xdir = 0;
+            b19.Ydir = 0;
+            UpdateBallMax(b19);
+            Balls.push(b19);
+			
+			
+			
+	/*		//sprite (maybe)
+			var b18 = new Ball();
+            b18.Xmin = xc;
+            b18.Ymin = yc;
+            b18.Red = 255;
+            b18.Green = 0;
+            b18.Blue = 0;
+            b18.Xdir = 0;
+            b18.Ydir = 0;
+            UpdateBallMax(b18);
+            Balls.push(b18);*/
+			
+			
+	/*		ctx.beginPath();
+    ctx.rect( -2.5, yc-2.5, ballRadius + 5, ballRadius + 5);
+    ctx.fillStyle = "#02B8DD";
+    ctx.fill();
+    ctx.closePath();
+	
+    ctx.beginPath();
+    ctx.rect(xc, yc, ballRadius, ballRadius);
+    ctx.fillStyle = "#eee";
+    ctx.fill();
+    ctx.closePath();*/
+			
+			
+			
+			/*	// This is a tile that i will call a paddle. im going to get the ball to stop at this.
+	var paddleHeight = 30;
+	var paddleWidth = 25;
+	var paddleX = 400;
+	var paddleY = canvas.height-100;
+	// var paddleY = Math.floor((Math.random() * 500) + 1);
+	
+	// The lazy way.
+	var paddleHeight1 = 30;
+	var paddleWidth1 = 25;
+	var paddleX1 = 400;
+	var paddleY1 = canvas.height-65;
+	
+	
+	var paddleHeight2 = 30;
+	var paddleWidth2 = 25;
+	
+	*/
+var paddleX2 = 370;
+var paddleY2 = 500;
+ 
+$('#jump').draggable({
+	  containment: 'document',
+	  cursor: 'move',
+	  helper: myJumpHelper
+  } );
+  $('#right').draggable({
+	  containment: 'document',
+	  cursor: 'move',
+	  helper: myRightHelper
+  } );
+  $('#left').draggable({
+	  containment: 'document',
+	  cursor: 'move',
+	  helper: myLeftHelper
+  } );
+  $('#makeMeDroppable').droppable({
+    drop: handleDropEvent
+  } );
+  $('#droppableStep2').droppable({
+    drop: handleDropEventStep2
+  } );
+  $('#droppableStep3').droppable({
+    drop: handleDropEventStep3
+  } );
+  $('#droppableStep4').droppable({
+    drop: handleDropEventStep4
+  } );
+  $('#droppableStep5').droppable({
+    drop: handleDropEventStep5
+  } );
+
+function myJumpHelper( event ) {
+	return '<div id="draggableHelper">Jump!</div>';
+}
+
+function myLeftHelper( event ) {
+	return '<div id="draggableHelper">Left</div>';
+}
+
+
+function myRightHelper( event ) {
+	return '<div id="draggableHelper">Right</div>';
+}
+
+
+
+
+//this handles the drop event Im going to get this to save to step one var
+function handleDropEvent( event, ui ) {
+  var draggable = ui.draggable;
+  var Step1var = draggable.attr('id')
+  document.getElementById("makeMeDroppable").innerHTML = Step1var;
+  
+  //window.alert("It has loaded the Step1Var as " + Step1var);
+  
+}
+
+function handleDropEventStep2( event, ui ) {
+  var draggable = ui.draggable;
+  var Step2var = draggable.attr('id')
+  document.getElementById("droppableStep2").innerHTML = Step2var;
+   // window.alert("It has loaded the Step2Var as " + Step2var);
+
+}
+
+function handleDropEventStep3( event, ui ) {
+  var draggable = ui.draggable;
+  var Step3var = draggable.attr('id')
+  document.getElementById("droppableStep3").innerHTML = Step3var;
+   // window.alert("It has loaded the Step2Var as " + Step3var);
+
+}
+
+function handleDropEventStep4( event, ui ) {
+  var draggable = ui.draggable;
+  var Step4var = draggable.attr('id')
+  document.getElementById("droppableStep4").innerHTML = Step4var;
+   // window.alert("It has loaded the Step2Var as " + Step4var);
+
+}
+
+function handleDropEventStep5( event, ui ) {
+  var draggable = ui.draggable;
+  var Step5var = draggable.attr('id')
+  document.getElementById("droppableStep5").innerHTML = Step5var;
+   // window.alert("It has loaded the Step2Var as " + Step5var);
+
+}
+
+
+function run (){
+	step1();
+	timeoutID = window.setTimeout(step2, 1500);
+	
+	
+	
+}
+
+function step1 (){
+	var Step1var = document.getElementById("makeMeDroppable").innerHTML
+	if (Step1var == "jump") {
+		jumpFun();
+		//window.alert("It has loaded the jump action " + Step1var);
+	}
+	else if (Step1var == "[object HTMLDivElement]") {
+		//wee test
+	window.alert("It has loaded the [object HTMLDivElement] He's Dead Jimmy. Please Report This Error. Bleep. Bloop.");
+	}
+	else if (Step1var == "left") {
+		leftFun();
+	}
+	else if (Step1var == "right"){
+		rightFun();
+	//window.alert("It has loaded the Right action " + Step1var);
+	}
+	}
+	
+	
+function step2 (){
+			var Step2var = document.getElementById("droppableStep2").innerHTML
+	if (Step2var == "jump") {
+		jumpFun()
+		//window.alert("It has loaded the jump action " + Step2var);
+	}
+	else if (Step2var == "[object HTMLDivElement]") {
+		//wee test
+	window.alert("It has loaded the [object HTMLDivElement] Basicly, it broke. :'(");
+	}
+	else if (Step2var == "left") {
+		leftFun();
+	//window.alert("It has loaded the left action. ");
+	}
+	else if (Step2var == "right"){
+		//wee test
+		rightFun();
+	//window.alert("It has loaded the Right action " + Step2var);
+	}
+	timeoutID = window.setTimeout(step3, 1500);
+	}
+	
+	
+	function step3 (){
+			var Step3var = document.getElementById("droppableStep3").innerHTML
+	if (Step3var == "jump") {
+		jumpFun()
+		//window.alert("It has loaded the jump action " + Step3var);
+	}
+	else if (Step3var == "[object HTMLDivElement]") {
+		//wee test
+	window.alert("It has loaded the [object HTMLDivElement] Basicly, it broke. :'(");
+	}
+	else if (Step3var == "left") {
+		leftFun();
+	//window.alert("It has loaded the left action. ");
+	}
+	else if (Step3var == "right"){
+		//wee test
+		rightFun();
+	//window.alert("It has loaded the Right action " + Step2var);
+	}
+	timeoutID = window.setTimeout(step4, 1500);
+	}
+	
+	
+	function step4 (){
+			var Step4var = document.getElementById("droppableStep4").innerHTML
+	if (Step4var == "jump") {
+		jumpFun()
+		//window.alert("It has loaded the jump action " + Step2var);
+	}
+	else if (Step4var == "[object HTMLDivElement]") {
+		//wee test
+	window.alert("It has loaded the [object HTMLDivElement] Basicly, it broke. :'(");
+	}
+	else if (Step4var == "left") {
+		leftFun();
+	//window.alert("It has loaded the left action. ");
+	}
+	else if (Step4var == "right"){
+		//wee test
+		rightFun();
+	//window.alert("It has loaded the Right action " + Step2var);
+	}
+	timeoutID = window.setTimeout(step5, 1500);
+	}
+	
+	
+	function step5 (){
+			var Step5var = document.getElementById("droppableStep5").innerHTML
+	if (Step5var == "jump") {
+		jumpFun()
+		//window.alert("It has loaded the jump action " + Step2var);
+	}
+	else if (Step5var == "[object HTMLDivElement]") {
+		//wee test
+	window.alert("It has loaded the [object HTMLDivElement] Basicly, it broke. :'(");
+	}
+	else if (Step5var == "left") {
+		leftFun();
+	//window.alert("It has loaded the left action. ");
+	}
+	else if (Step5var == "right"){
+		//wee test
+		rightFun();
+	//window.alert("It has loaded the Right action " + Step2var);
+	}}
+	
+	
+function jumpFun(){
+	/*	dy=-2
+		timeoutID = window.setTimeout(stopBall, 438);
+		//draw()
+		//Level up code*/
+	/*	var count = 35;
+ 
+for (var i = 0; i < count; i++ ) {
+	timeoutID = window.setTimeout(ycMinus(), 100);
+}*/
+		
+		
+		
+		// loop through array with all new ids
+var i = 0, l = 35;
+(function iterator() {
+    yc--
+
+    if(++i<l) {
+        setTimeout(iterator, 10);
+    }
+})();
+		
+		
+		if (yc < -10) {
+				window.location.href = "level3.html";
+                         }
+}
+
+function leftFun (){
+/*	dx=-2
+		timeoutID = window.setTimeout(stopBall, 375);*/
+		
+		
+		var i = 0, l = 30;
+(function iterator() {
+    xc--
+
+    if(++i<l) {
+        setTimeout(iterator, 10);
+    }
+})();
+		
+		
+		
+	}
+
+function rightFun (){
+	/*dx=2
+		timeoutID = window.setTimeout(stopBall, 375)*/
+		
+				var i = 0, l = 30;
+(function iterator() {
+    xc++
+
+    if(++i<l) {
+        setTimeout(iterator, 10);
+    }
+})();
+		
+		
+		
+	}
+
+//PLAN: 
+
+//storing a reference to the <canvas> element to the canvas variable for future reference and creating the ctx variable to store the 2D rendering (the  thing we can use to paint on the canvas)
+	var canvas = document.getElementById("myCanvas");
+	var ctx = canvas.getContext("2d");
+	
+	var ballRadius = 10;
+	
+	
+	// random position of sq
+	//this is the red sq
+	//var sqPosy = Math.floor((Math.random() * 500) + 1);
+	
+	
+/*	// This is a tile that i will call a paddle. im going to get the ball to stop at this.
+	var paddleHeight = 30;
+	var paddleWidth = 25;
+	var paddleX = 400;
+	var paddleY = canvas.height-100;
+	// var paddleY = Math.floor((Math.random() * 500) + 1);
+	
+	// The lazy way.
+	var paddleHeight1 = 30;
+	var paddleWidth1 = 25;
+	var paddleX1 = 400;
+	var paddleY1 = canvas.height-65;
+	
+	
+	var paddleHeight2 = 25;
+	var paddleWidth2 = 20;*/
+	
+	
+	
+	//moving ball code
+	// xc & yc are where the baw starts
+	var xc = 378;
+	var yc = 575;
+	
+	// dx & dy change the position of the baw by the defined amount
+	// Minus = left
+	var dx = 0;
+	//minus = up
+	var dy = 0;
+	
+	function stopBall() {
+	 dx = 0;
+	 dy = 0;
+}
+//	for(var c=0; c<objposArray.length; c++){
+ //
+//}
+	
+	
+	//the first two values specify the coordinates of the top left corner of the rectangle on the canvas, while the second two specify the width and height of the rectangle. 
+	
+	
+	
+	
+	
+
+/*	function drawPaddle() {
+	//border bit
+	ctx.beginPath();
+    ctx.rect(paddleX -2.5, paddleY-2.5, paddleWidth + 5, paddleHeight + 5);
+    ctx.fillStyle = "#C48C00";
+    ctx.fill();
+    ctx.closePath();
+	
+	//black bit
+	ctx.beginPath();
+    ctx.rect(paddleX, paddleY, paddleWidth, paddleHeight);
+    ctx.fillStyle = "#000000";
+    ctx.fill();
+    ctx.closePath();
+}
+
+function drawPaddle1() {
+	
+	ctx.beginPath();
+    ctx.rect(paddleX1 -2.5, paddleY1-2.5, paddleWidth1 + 5, paddleHeight1 + 5);
+    ctx.fillStyle = "#C48C00";
+    ctx.fill();
+    ctx.closePath();
+	
+    ctx.beginPath();
+    ctx.rect(paddleX1, paddleY1, paddleWidth1, paddleHeight1);
+    ctx.fillStyle = "#000000";
+    ctx.fill();
+    ctx.closePath();
+}
+
+function drawPaddle2() {
+	
+	ctx.beginPath();
+    ctx.rect(paddleX2 -2.5, paddleY2-2.5, paddleWidth2 + 5, paddleHeight2 + 5);
+    ctx.fillStyle = "#C48C00";
+    ctx.fill();
+    ctx.closePath();
+	
+    ctx.beginPath();
+    ctx.rect(paddleX2, paddleY2, paddleWidth2, paddleHeight2);
+    ctx.fillStyle = "#000000";
+    ctx.fill();
+    ctx.closePath();
+}*/
+
+
+
+
+
+
+
+
+	
+
+	function drawBall() {
+	/*	ctx.beginPath();
+		ctx.arc(xc, yc, ballRadius, 0, Math.PI*2);
+		ctx.fillStyle = "#02B8DD";
+		ctx.fill();
+		ctx.closePath();*/
+		
+	ctx.beginPath();
+    ctx.rect(xc -2.5, yc-2.5, ballRadius + 5, ballRadius + 5);
+    ctx.fillStyle = "#02B8DD";
+    ctx.fill();
+    ctx.closePath();
+	
+    ctx.beginPath();
+    ctx.rect(xc, yc, ballRadius, ballRadius);
+    ctx.fillStyle = "#eee";
+    ctx.fill();
+    ctx.closePath();
+	}
+	
+	//red sq
+	/*function drawSq() {
+    ctx.beginPath();
+    ctx.rect(375, sqPosy, 50, 50);
+    ctx.fillStyle = "#FF0000";
+    ctx.fill();
+    ctx.closePath();
+}*/
+
+// This helps draw the "balls" (They are actually rectangles)
+function Logic() {
+            /*for (var i = 0; i < Balls.length; i++) {
+                CheckBallCollision(Balls, i);
+            }*/
+
+            for (var i = 0; i < Balls.length; i++) {
+                Balls[i].Xmin = Balls[i].Xmin + Balls[i].Xdir;
+                Balls[i].Ymin = Balls[i].Ymin + Balls[i].Ydir;
+                UpdateBallMax(Balls[i]);
+            }
+
+        }
+
+
+        /*function CheckBallCollision(BallsArray, index) {
+            var Ball = BallsArray[index];
+            
+            for (var i = 0; i < BallsArray.length; i++) {
+                if (index != i) {
+					
+				}
+                    
+                    
+                        if ((xc != BallsArray[i].Xmin)) {
+                            if ((yc >= BallsArray[i].Ymin) && (yc <= BallsArray[i].Ymin) ||
+                           ((yc <= BallsArray[i].Ymax) && (yc >= BallsArray[i].Ymax))) {
+							   console.log("1");
+									//code
+
+                            }
+                        
+                    } else 
+                        if ((xc != BallsArray[i].Xmax)) {
+                            if ((yc >= BallsArray[i].Ymin) && (yc <= BallsArray[i].Ymin) ||
+                           ((yc <= BallsArray[i].Ymax) && (yc >= BallsArray[i].Ymax))) {
+							   console.log("2");
+								//code
+                            }
+                        }
+                    
+
+                    
+                        if ((yc != BallsArray[i].Ymin)) {
+                            if ((xc >= 420) && (yc >= 400) ||
+                           ((xc <= BallsArray[i].Xmax) && (xc >= BallsArray[i].Xmax))) {
+							   console.log("3");
+								//code
+								console.log("Game?");
+                            }
+                        
+                    } else 
+                        if ((yc != BallsArray[i].Ymax)) {
+                            if ((xc >= BallsArray[i].Xmin) && (xc <= BallsArray[i].Xmin) ||
+                           ((xc <= BallsArray[i].Xmax) && (xc >= BallsArray[i].Xmax))) {
+							  console.log("4");
+							   
+								//code
+                            }
+                        
+						}
+            }
+        }*/
+		
+		/*if ball is with in x & y ||  then var = 1
+if var = 0 { gave over!}
+*/
+		
+		function animateBg()
+{
+  document.body.style.backgroundColor = 'black';
+  setTimeout(animateBg, 2000); // milliseconds
+}
+                            
+
+							
+function writeMessage(canvas, message) {
+        context.fillStyle = 'black';
+        context.fillText(message, 10, 25);
+		console.log(message, 10, 25);
+      }
+      function getMousePos(canvas, evt) {
+        var rect = canvas.getBoundingClientRect();
+        return {
+          x: evt.clientX - rect.left,
+          y: evt.clientY - rect.top
+        };
+      }
+      var canvas = document.getElementById('myCanvas');
+      var context = canvas.getContext('2d');
+
+      canvas.addEventListener('mousemove', function(evt) {
+        var mousePos = getMousePos(canvas, evt);
+        var message = 'Mouse position: ' + mousePos.x + ',' + mousePos.y;
+        writeMessage(canvas, message);
+      }, false);
+
+
+	
+	var over = 0;
+	
+	
+	function draw() {
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+	    
+		
+		
+		
+/*		drawPaddle();
+		drawPaddle1();
+		drawPaddle2();*/
+		//drawSq();
+		xc += dx;
+		yc += dy;
+		
+		for (var i = 0; i < Balls.length; i++) {
+			
+			    ctx.fillStyle = "#C48C00";
+                ctx.fillRect(Balls[i].Xmin -2.5, Balls[i].Ymin -2.5, Balls[i].Width +5, Balls[i].Height +5);
+			
+			
+			
+			
+                ctx.fillStyle = "#000000";
+                ctx.fillRect(Balls[i].Xmin, Balls[i].Ymin, Balls[i].Width, Balls[i].Height);
+            }
+	
+	Logic();
+		
+		
+		
+		// these 2 if statements stops the ball going off screen
+		if(xc + dx > canvas.width-ballRadius || xc + dx < ballRadius) {
+    		dx = -dx;
+		}
+		
+		
+		
+		
+							if ((xc < 350) && (yc > 426)) {
+							   var over = 1
+							   console.log("Game?");
+							   animateBg()
+							   window.alert("You DIED. Try Again.");
+							   location.reload();
+								//code
+                            }
+							else if ((xc > 435) && (yc > 392)) {
+							   var over = 1
+							   console.log("Game? Right first few steps");
+							   animateBg()
+							   window.alert("You DIED. Try Again.");
+							   location.reload();
+								//code
+                            }
+							else if ((xc < 367) && (yc < 392)) {
+							   var over = 1
+							   console.log("Game? left last few steps");
+							   animateBg()
+							   window.alert("You DIED. Try Again!.");
+							   location.reload();
+								//code
+                            }
+							else if ((xc > 400) && (yc < 392)) {
+							   var over = 1
+							   console.log("Game? Right last few steps");
+							   animateBg()
+							   window.alert("You DIED. Try Again.");
+							   location.reload();
+								//code
+                            }
+							
+							
+
+	drawBall();
+}
+
+
+    
+	function UpdateBallMax(ball) {
+            UpdateBallMaxX(ball);
+            UpdateBallMaxY(ball);
+        }
+
+        function UpdateBallMaxX(ball) {
+            ball.Xmax = ball.Xmin + ball.Width;
+        }
+
+        function UpdateBallMaxY(ball) {
+            ball.Ymax = ball.Ymin + ball.Height;
+        }
+
+        function Ball() {
+            this.Xmin = 0; //top left X coord
+            this.Ymin = 0; //top left y coord
+            this.Height = 30;
+            this.Width = 25;
+            this.Xmax = this.Xmin + this.Width;
+            this.Ymax = this.Ymin + this.Height;
+            this.Xdir = 0; // 0 not moving, 1 moving right, -1 moving left
+            this.Ydir = 0;
+            this.Red = 0;
+            this.Green = 0;
+            this.Blue = 200;
+            this.Opacity = 1;
+            this.Speed = 1;
+        }
+
+/*function levelUp() {
+if (yc < -10) {
+				window.location.href = "http://stackoverflow.com";
+                         }
+}*/
+
+setInterval(draw, 25);
+//setInterval(levelUp, 5000);
+
+</script>
+</body>
+</html>
